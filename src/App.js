@@ -4,7 +4,7 @@ import axios from 'axios'
 const Finder = (props) => {
   return(
     <div>
-      find countries <input
+      find countries <input value={props.newFilter}
       onChange={props.handler}
       />
     </div>
@@ -18,10 +18,11 @@ const Countries = (props) => {
       <p>Countries will be listed here</p>      
     </div>)
   } else {
-    const results = props.countries.filter(function (country) { return country.name.toLowerCase().includes(props.newFilter.toLowerCase())})
+    const results = props.countries.filter(function (country) {return country.name.toLowerCase().includes(props.newFilter.toLowerCase())})
     if (results.length > 1 && results.length <= 10) {
       return (results.map(country =>
-        <p key={country.name}>{country.name}</p>))
+        <p key={country.name}>{country.name} <button onClick={function (e) {props.setNewFilter(e.target.value)}} value={country.name}>show</button></p>
+      ))
     } else if (results.length === 1) {
       return (
         results.map(country =>
@@ -38,6 +39,11 @@ const Countries = (props) => {
           </div>
         )
       )
+    } else if (results.length === 0) {
+      return (
+      <div>
+        <p>Found ({results.length}) results, specify another filter</p>      
+      </div>)
     } else {
       return (
       <div>
@@ -48,7 +54,7 @@ const Countries = (props) => {
 }
 
 const App = () => {
-  const [ newFilter, setNewFilter ] = useState('')
+  const [ newFilter, setNewFilter] = useState('')
   const [ countries, setCountries] = useState([]) 
 
   useEffect(() => {
@@ -67,8 +73,8 @@ const App = () => {
 
   return (
     <div>
-      <Finder handler={handleFilterChange}/>
-      <Countries countries={countries} newFilter={newFilter}/>
+      <Finder handler={handleFilterChange} newFilter={newFilter}/>
+      <Countries countries={countries} newFilter={newFilter} setNewFilter={setNewFilter}/>
     </div>
   )
 }
